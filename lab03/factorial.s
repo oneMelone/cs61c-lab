@@ -1,7 +1,7 @@
 .globl factorial
 
 .data
-n: .word 8
+n: .word 7
 
 .text
 main:
@@ -21,4 +21,13 @@ main:
     ecall # Exit
 
 factorial:
-    # YOUR CODE HERE
+	addi s0, x0, 1 # s0: result = 1
+	addi, t0, x0, 1 # t0 = 1
+	loop:
+		blt a0, t0, exit # if n < 1, exit
+		mul s0, s0, a0
+		addi a0, a0, -1
+		j loop
+	exit:
+		add a0, s0, x0
+		jr ra
