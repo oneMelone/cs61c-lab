@@ -1,51 +1,51 @@
 Exercise 1
 	Scenario 1
-		1. 
-		2.
-		3.
+		1. Because step size in bytes is exactly equal to cache size in bytes.
+		2. Still 0. As last answer says, every access would evict the recently loaded block.
+		3. Change array size to 32.
 
 	Scenario 2
-		1.
-		2.
-		3.
-		4.
-		5.
+		1. 2 accesses, one for read and one for write.
+		2. miss -> hit -> hit -> hit
+		3. 75%
+		4. 100%. As the first outer iteration is end, every elements of the array is in the cache and never evicted.
+		5. Instead of access all the arr at once, access a part of that arr, and do all functions in 1024 iterations. This part should be perfectly remained in the cache during the operation.
 
 	Scenario 3
-		1.
-		2.
-		3.
-		4.
-		5.
+		1. 50%; 0%; 50%
+		2. 32; 16
+		3. 16; misses on l1 would access l2
+		4. rep count
+		5. Increase block numbers does nothing; increase block size make hit rates for l1 higher.
 
 Exercise 2
-	ijk:
-	ikj:
-	jik:
-	jki:
-	kij:
-	kji:
+	ijk: 1.497
+	ikj: 0.135
+	jik: 1.424
+	jki: 9.560
+	kij: 0.156
+	kji: 8.289
 
-	1.
-	2.
-	3.
+	1. jki is the best. As the inner most loop is accessing as C[i + j * n], A[i + k * n], B[k + j * n], and we want to access closer elements in a time interval. If we change i fast, it's ok; but if we change k fast, A would be accessed here and there in a short time; if we change j fast, both C and B are accessed here and there. So gennerally speaking, we want to access in a way that A, B and C are accessed in adjacent space during a time interval.  
+	2. ikj. As explained in 1.
+	3. In the inner most loop, we don't want a large stride for accessing matrices.
 
 Exercise 3
 	Part 1
-		blocksize = 20, n = 100: 
-		blocksize = 20, n = 1000: 
-		blocksize = 20, n = 2000: 
-		blocksize = 20, n = 5000: 
-		blocksize = 20, n = 10000: 
+		blocksize = 20, n = 100: 0.005 - 0.005
+		blocksize = 20, n = 1000: 1.018 - 0.936
+		blocksize = 20, n = 2000: 15.098 - 3.57
+		blocksize = 20, n = 5000: 136.752 - 22.24
+		blocksize = 20, n = 10000: 711.269 - 108.513
 
-		1.
-		2.
+		1. When n >= 1000, cache blocked version is better.
+		2. It contains more for loop. 
 
 	Part 2
-		blocksize = 50, n = 10000:
-		blocksize = 100, n = 10000:
-		blocksize = 500, n = 10000:
-		blocksize = 1000, n = 10000:
-		blocksize = 5000, n = 10000:
+		blocksize = 50, n = 10000: 139.606
+		blocksize = 100, n = 10000: 125.524
+		blocksize = 500, n = 10000: 120.992
+		blocksize = 1000, n = 10000: 167.434
+		blocksize = 5000, n = 10000: 646.911
 
-		1.
+		1. It first becomes better, than go worse. A proper blocksize may use cache more efficiently, since if the block size is too small, adjacent data which has been loaded to cache may not be used; whereas if the block size is too large, it's like non-cache blocking, and cache will miss a lot.

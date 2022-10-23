@@ -12,10 +12,36 @@ void transpose_naive(int n, int blocksize, int *dst, int *src) {
     }
 }
 
+void transpose_one_block(int n, int blocksize, int *dst, int *src, int start_x, int start_y) {
+	for (int x = start_x; x < start_x + blocksize; x++) {
+		for (int y = start_y; y < start_y + blocksize; y++) {
+			dst[y + x * n] = src[x + y * n];
+		}
+	}	
+}
+
 /* Implement cache blocking below. You should NOT assume that n is a
  * multiple of the block size. */
 void transpose_blocking(int n, int blocksize, int *dst, int *src) {
-    // YOUR CODE HERE
+	for (int x = 0; x < n; x += blocksize) {
+		for (int y = 0; y < n; y += blocksize) {
+			transpose_one_block(n, blocksize, dst, src, x, y);
+		}
+	}
+	if (n / blocksize == 0) return;
+
+	int remaind = n % blocksize;
+	for (int x = n - remaind; x < n; x++) {
+		for (int y = 0; y < n - remaind; y++) {
+			dst[y + x * n] = src[x + y * n];
+		}
+	}
+
+	for (int y = n - remaind; y < n; y++) {
+		for (int x = 0; x < n; x++) {
+			dst[y + x * n] = src[x + y * n];
+		}
+	}
 }
 
 void benchmark(int *A, int *B, int n, int blocksize,
