@@ -85,11 +85,34 @@ long long int sum_simd_unrolled(unsigned int vals[NUM_ELEMS]) {
 	__m128i _127 = _mm_set1_epi32(127);
 	long long int result = 0;
 	for(unsigned int w = 0; w < OUTER_ITERATIONS; w++) {
-		/* COPY AND PASTE YOUR sum_simd() HERE */
-		/* MODIFY IT BY UNROLLING IT */
-
-		/* You'll need 1 or maybe 2 tail cases here. */
-
+		__m128i sum_vec = _mm_setzero_si128();
+		unsigned int i = 0;
+		for (; i + 16 < NUM_ELEMS; i += 16) {
+			__m128i cur_vec = _mm_loadu_si128((__m128i*)(vals + i));
+			__m128i larger_than_127 = _mm_cmpgt_epi32(cur_vec, _127);
+			cur_vec = _mm_and_si128(cur_vec, larger_than_127);
+			sum_vec = _mm_add_epi32(cur_vec, sum_vec);
+			cur_vec = _mm_loadu_si128((__m128i*)(vals + i + 4));
+			larger_than_127 = _mm_cmpgt_epi32(cur_vec, _127);
+			cur_vec = _mm_and_si128(cur_vec, larger_than_127);
+			sum_vec = _mm_add_epi32(cur_vec, sum_vec);
+			cur_vec = _mm_loadu_si128((__m128i*)(vals + i + 8));
+			larger_than_127 = _mm_cmpgt_epi32(cur_vec, _127);
+			cur_vec = _mm_and_si128(cur_vec, larger_than_127);
+			sum_vec = _mm_add_epi32(cur_vec, sum_vec);
+			cur_vec = _mm_loadu_si128((__m128i*)(vals + i + 12));
+			larger_than_127 = _mm_cmpgt_epi32(cur_vec, _127);
+			cur_vec = _mm_and_si128(cur_vec, larger_than_127);
+			sum_vec = _mm_add_epi32(cur_vec, sum_vec);
+		}
+		for (; i < NUM_ELEMS; i++) {
+			if (vals[i] >= 128) result += vals[i];
+		}
+		int sum_arr[4];
+		_mm_storeu_si128((__m128i*)sum_arr, sum_vec);
+		for (int i = 0; i < 4; i++) {
+			result += sum_arr[i];
+		}
 	}
 	clock_t end = clock();
 	printf("Time taken: %Lf s\n", (long double)(end - start) / CLOCKS_PER_SEC);
