@@ -5,6 +5,8 @@
 
 #define NUM_ELEMS ((1 << 16) + 10)
 #define OUTER_ITERATIONS (1 << 16)
+// #define NUM_ELEMS 10
+// #define OUTER_ITERATIONS 2
 
 long long int sum(unsigned int vals[NUM_ELEMS]);
 

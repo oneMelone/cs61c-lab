@@ -3,6 +3,12 @@
 #include <x86intrin.h>
 #include "common.h"
 
+// void print_vec(__m128i var) {
+//     int val[4];
+//     memcpy(val, &var, sizeof(val));
+//     printf("[vec] %d %d %d %d\n", val[0], val[1], val[2], val[3]);
+// }
+
 long long int sum(unsigned int vals[NUM_ELEMS]) {
 	clock_t start = clock();
 
@@ -52,10 +58,22 @@ long long int sum_simd(unsigned int vals[NUM_ELEMS]) {
 	/* DO NOT DO NOT DO NOT DO NOT WRITE ANYTHING ABOVE THIS LINE. */
 	
 	for(unsigned int w = 0; w < OUTER_ITERATIONS; w++) {
-		/* YOUR CODE GOES HERE */
-
-		/* You'll need a tail case. */
-
+		__m128i sum_vec = _mm_setzero_si128();
+		unsigned int i = 0;
+		for (; i + 4 < NUM_ELEMS; i += 4) {
+			__m128i cur_vec = _mm_loadu_si128((__m128i*)(vals + i));
+			__m128i larger_than_127 = _mm_cmpgt_epi32(cur_vec, _127);
+			cur_vec = _mm_and_si128(cur_vec, larger_than_127);
+			sum_vec = _mm_add_epi32(cur_vec, sum_vec);
+		}
+		for (; i < NUM_ELEMS; i++) {
+			if (vals[i] >= 128) result += vals[i];
+		}
+		int sum_arr[4];
+		_mm_storeu_si128((__m128i*)sum_arr, sum_vec);
+		for (int i = 0; i < 4; i++) {
+			result += sum_arr[i];
+		}
 	}
 	clock_t end = clock();
 	printf("Time taken: %Lf s\n", (long double)(end - start) / CLOCKS_PER_SEC);

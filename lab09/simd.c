@@ -11,6 +11,11 @@ int main(int argc, char* argv[]) {
 	long long int simd;
 	long long int simdu;
 	for(unsigned int i = 0; i < NUM_ELEMS; i++) vals[i] = rand() % 256;
+	
+	// ---test---
+//	printf("vals: \n");
+//	for (unsigned int i = 0; i < NUM_ELEMS; i++) printf("%d ", vals[i]);
+//	printf("\n");
 
 	printf("Starting randomized sum.\n");
 	printf("Sum: %lld\n", reference = sum(vals));
